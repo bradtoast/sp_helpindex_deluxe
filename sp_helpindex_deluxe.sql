@@ -1,3 +1,6 @@
+USE [DBAUtility]
+GO
+
 IF OBJECT_ID(N'dbo.sp_helpindex_deluxe', N'P') IS NULL
 BEGIN
     EXEC ('CREATE PROCEDURE dbo.sp_helpindex_deluxe AS RAISERROR(''There is no implementation for this sproc!'', 16, 1)')
@@ -155,16 +158,16 @@ BEGIN
 
 	IF (@include_physical_stats = 0)
 	BEGIN
-		SELECT  index_name				= t.name
-			  , index_id				= t.index_id
-			  , orig_fillfactor			= t.fill_factor
-			  , index_description		= t.type_desc + 
-											CASE WHEN t.is_unique  = 1 THEN ', UNIQUE' ELSE '' END +  
-											CASE WHEN t.is_primary_key = 1 THEN ', PRIMARY KEY' ELSE '' END + 
-											' located on ' + t.data_space_name
-			  , index_key_columns		= CASE WHEN LEN(t.key_columns) > 0 THEN LEFT(t.key_columns, LEN(t.key_columns) - 1) ELSE '' END
-			  , included_columns		= CASE WHEN LEN(t.included_columns) > 0 THEN LEFT(t.included_columns, LEN(t.included_columns) - 1) ELSE '' END 
-			  , t.filter_definition
+		SELECT  index_name			= t.name
+			  , index_id			= t.index_id
+			  , orig_fillfactor		= t.fill_factor
+			  , index_description	= t.type_desc + 
+										CASE WHEN t.is_unique  = 1 THEN ', UNIQUE' ELSE '' END +  
+										CASE WHEN t.is_primary_key = 1 THEN ', PRIMARY KEY' ELSE '' END + 
+										' located on ' + t.data_space_name
+			  , index_key_columns	= CASE WHEN LEN(t.key_columns) > 0 THEN LEFT(t.key_columns, LEN(t.key_columns) - 1) ELSE '' END
+			  , included_columns	= CASE WHEN LEN(t.included_columns) > 0 THEN LEFT(t.included_columns, LEN(t.included_columns) - 1) ELSE '' END 
+			  , t.filter_definition 
 			  , t.last_user_seek
 			  , t.last_user_scan
 			  , t.last_user_lookup
@@ -173,23 +176,23 @@ BEGIN
 			  , t.user_scans
 			  , t.user_lookups
 			  , t.user_updates
-			  , rebuild_text			= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REBUILD WITH (ONLINE=ON' + 
-											CASE WHEN @new_fill_factor = 1 THEN ', FILLFACTOR = ' + CASE WHEN @new_fill_factor IS NOT NULL THEN CONVERT(NVARCHAR(3), @new_fill_factor) ELSE CONVERT(NVARCHAR(3), t.fill_factor) END ELSE '' END + ') ;'
-			  , reorganize_text			= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REORGANIZE ;' 
-			  , drop_text				= 'DROP INDEX  [' + t.name + '].[' +  @object_name + '] ;' 
+			  , rebuild_text		= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REBUILD WITH (ONLINE=ON' + 
+										CASE WHEN @new_fill_factor = 1 THEN ', FILLFACTOR = ' + CASE WHEN @new_fill_factor IS NOT NULL THEN CONVERT(NVARCHAR(3), @new_fill_factor) ELSE CONVERT(NVARCHAR(3), t.fill_factor) END ELSE '' END + ') ;'
+			  , reorganize_text		= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REORGANIZE ;' 
+			  , drop_text			= 'DROP INDEX  [' + t.name + '].[' +  @object_name + '] ;' 
 		FROM  #TempIndexes AS t
 	END
 	ELSE 
 	BEGIN
-		SELECT  index_name				= t.name
-			  , index_id				= t.index_id
-			  , orig_fillfactor			= t.fill_factor
-			  , index_description		= t.type_desc + 
-											CASE WHEN t.is_unique  = 1 THEN ', UNIQUE' ELSE '' END +  
-											CASE WHEN t.is_primary_key = 1 THEN ', PRIMARY KEY' ELSE '' END + 
-											' located on ' + t.data_space_name
-			  , index_key_columns		= CASE WHEN LEN(t.key_columns) > 0 THEN LEFT(t.key_columns, LEN(t.key_columns) - 1) ELSE '' END
-			  , included_columns		= CASE WHEN LEN(t.included_columns) > 0 THEN LEFT(t.included_columns, LEN(t.included_columns) - 1) ELSE '' END 
+		SELECT  index_name			= t.name
+			  , index_id			= t.index_id
+			  , orig_fillfactor		= t.fill_factor
+			  , index_description	= t.type_desc + 
+										CASE WHEN t.is_unique  = 1 THEN ', UNIQUE' ELSE '' END +  
+										CASE WHEN t.is_primary_key = 1 THEN ', PRIMARY KEY' ELSE '' END + 
+										' located on ' + t.data_space_name
+			  , index_key_columns	= CASE WHEN LEN(t.key_columns) > 0 THEN LEFT(t.key_columns, LEN(t.key_columns) - 1) ELSE '' END
+			  , included_columns	= CASE WHEN LEN(t.included_columns) > 0 THEN LEFT(t.included_columns, LEN(t.included_columns) - 1) ELSE '' END 
 			  , t.filter_definition
 			  , t.last_user_seek
 			  , t.last_user_scan
@@ -199,10 +202,10 @@ BEGIN
 			  , t.user_scans
 			  , t.user_lookups
 			  , t.user_updates
-			  , rebuild_text			= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REBUILD WITH (ONLINE=ON' + 
-											CASE WHEN @new_fill_factor = 1 THEN ', FILLFACTOR = ' + CASE WHEN @new_fill_factor IS NOT NULL THEN CONVERT(NVARCHAR(3), @new_fill_factor) ELSE CONVERT(NVARCHAR(3), t.fill_factor) END ELSE '' END + ') ;'
-			  , reorganize_text			= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REORGANIZE ;' 
-			  , drop_text				= 'DROP INDEX  [' + t.name + '].[' +  @object_name + '] ;' 
+			  , rebuild_text		= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REBUILD WITH (ONLINE=ON' + 
+										CASE WHEN @new_fill_factor = 1 THEN ', FILLFACTOR = ' + CASE WHEN @new_fill_factor IS NOT NULL THEN CONVERT(NVARCHAR(3), @new_fill_factor) ELSE CONVERT(NVARCHAR(3), t.fill_factor) END ELSE '' END + ') ;'
+			  , reorganize_text		= 'ALTER INDEX [' + t.name + '] ON [' +  @object_name + '] REORGANIZE ;' 
+			  , drop_text			= 'DROP INDEX  [' + t.name + '].[' +  @object_name + '] ;' 
 			  , f.avg_fragmentation_in_percent
 			  , f.fragment_count
 			  , f.avg_fragment_size_in_pages
