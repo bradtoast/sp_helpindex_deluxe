@@ -1,6 +1,3 @@
-USE [DBAUtility]
-GO
-
 IF OBJECT_ID(N'dbo.sp_helpindex_deluxe', N'P') IS NULL
 BEGIN
     EXEC ('CREATE PROCEDURE dbo.sp_helpindex_deluxe AS RAISERROR(''There is no implementation for this sproc!'', 16, 1)')
